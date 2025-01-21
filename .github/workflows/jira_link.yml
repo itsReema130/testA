@@ -1,9 +1,9 @@
-name: 'Add Jira Link'
+name: "Add Jira Link"
 on:
   pull_request:
     types:
-      - 'opened'
-    branches: ['*']
+      - "opened"
+    branches: ["*"]
 
 jobs:
   jira-link:
