@@ -1,9 +1,18 @@
+<<<<<<< HEAD
 name: "Add Jira Link"
 on:
   pull_request:
     types:
       - "opened"
     branches: ["*"]
+=======
+name: 'Add Jira Link'
+on:
+  pull_request:
+    types:
+      - 'opened'
+    branches: ['*']
+>>>>>>> 64551dd (init)
 
 jobs:
   jira-link:

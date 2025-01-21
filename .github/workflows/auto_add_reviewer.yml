@@ -11,4 +11,8 @@ jobs:
       - uses: kentaro-m/auto-assign-action@v2.0.0
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+<<<<<<< HEAD
           configuration-path: ".github/auto_assign.yml"
+=======
+          configuration-path: '.github/auto_assign.yml'
+>>>>>>> 64551dd (init)

@@ -12,4 +12,8 @@ jobs:
         with:
           config_path: .github/labeler_config.yml
         env:
+<<<<<<< HEAD
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+=======
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+>>>>>>> 64551dd (init)
