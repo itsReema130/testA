@@ -21,7 +21,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          reviewers="['itsReema130']"
+          reviewers="F600sa"
           assignees="itsReema130"
 
           # Split the reviewers and assignees into arrays
@@ -29,12 +29,14 @@ jobs:
           IFS=' ' read -r -a assignees_array <<< "$assignees"
 
           # Add reviewers using the GitHub API
-          echo "Attempting to add reviewers: $reviewers"
-          gh api \
-            --method POST \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            /repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers \
-            -f reviewers="$reviewers" || true
+          for reviewer in "${reviewers_array[@]}"; do
+            echo "Attempting to add reviewer: $reviewer"
+            gh api \
+              --method POST \
+              -H "Authorization: token $GITHUB_TOKEN" \
+              /repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers \
+              -f reviewers="$reviewer" || true
+          done
 
           # Add assignees using the GitHub CLI
           for assignee in "${assignees_array[@]}"; do
