@@ -1,12 +1,5 @@
-            - name: Request review
-  # You may pin to the exact commit or the version.
-  # uses: murs313/request-review@fb50780dbb30612d1ec19b62e4cfc5a7805855cf
+- name: Request review
   uses: murs313/request-review@v1.0
   with:
-    # GitHub token
-    token: 
-    # Reviewers to add, in space separated list
-    reviewers: 
-     itsReema130
-    # Pull request's number
-          
+    token: ${{ secrets.GITHUB_TOKEN }}
+    reviewers: itsReema130
