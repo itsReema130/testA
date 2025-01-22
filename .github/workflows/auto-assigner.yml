@@ -28,13 +28,17 @@ jobs:
           IFS=' ' read -r -a reviewers_array <<< "$reviewers"
           IFS=' ' read -r -a assignees_array <<< "$assignees"
 
-          # Add reviewers
+          # Add reviewers using the GitHub API
           for reviewer in "${reviewers_array[@]}"; do
             echo "Attempting to add reviewer: $reviewer"
-            gh pr review-request "${{ github.event.pull_request.number }}" --add "$reviewer" || true
+            gh api \
+              --method POST \
+              -H "Authorization: token $GITHUB_TOKEN" \
+              /repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers \
+              -f reviewers="$reviewer" || true
           done
 
-          # Add assignees
+          # Add assignees using the GitHub CLI
           for assignee in "${assignees_array[@]}"; do
             echo "Attempting to add assignee: $assignee"
             gh pr edit "${{ github.event.pull_request.number }}" --add-assignee "$assignee" || true
