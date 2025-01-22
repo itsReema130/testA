@@ -3,8 +3,6 @@ name: auto-assign-reviewers-and-assignees
 on:
   pull_request:
     types: [opened, ready_for_review, reopened]
-  issues:
-    types: [opened]
 
 jobs:
   auto_assign:
@@ -32,10 +30,12 @@ jobs:
 
           # Add reviewers
           for reviewer in "${reviewers_array[@]}"; do
-            gh pr edit "${{ github.event.pull_request.number }}" --add-reviewer "$reviewer" || true
+            echo "Attempting to add reviewer: $reviewer"
+            gh pr review-request "${{ github.event.pull_request.number }}" --add "$reviewer" || true
           done
 
           # Add assignees
           for assignee in "${assignees_array[@]}"; do
+            echo "Attempting to add assignee: $assignee"
             gh pr edit "${{ github.event.pull_request.number }}" --add-assignee "$assignee" || true
           done
