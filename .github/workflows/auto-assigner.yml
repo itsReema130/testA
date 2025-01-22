@@ -10,8 +10,15 @@ jobs:
   auto_assign:
     name: Auto Assign
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v2
+
+      - name: Install GitHub CLI
+        run: sudo apt-get install gh -y
+
       - name: Auto Assign Reviewers and Assignees
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -25,10 +32,10 @@ jobs:
 
           # Add reviewers
           for reviewer in "${reviewers_array[@]}"; do
-            gh pr edit ${{ github.event.pull_request.number }} --add-reviewer "$reviewer" || true
+            gh pr edit "${{ github.event.pull_request.number }}" --add-reviewer "$reviewer" || true
           done
 
           # Add assignees
           for assignee in "${assignees_array[@]}"; do
-            gh pr edit ${{ github.event.pull_request.number }} --add-assignee "$assignee" || true
+            gh pr edit "${{ github.event.pull_request.number }}" --add-assignee "$assignee" || true
           done
