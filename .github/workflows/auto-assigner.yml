@@ -1,14 +1,34 @@
-name: Auto Assign
+name: auto-assign-reviewers-and-assignees
 
 on:
   pull_request:
-    types: [opened, reopened, ready_for_review, edited, closed]
+    types: [opened, ready_for_review]
+  issues:
+    types: [opened]
 
 jobs:
-  add-reviewers:
+  auto_assign:
+    name: Auto Assign
     runs-on: ubuntu-latest
     steps:
-      - uses: kentaro-m/auto-assign-action@v2.0.0
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          configuration-path: ".github/auto_assign.yml"
+      - uses: actions/checkout@v2
+      - name: Auto Assign Reviewers and Assignees
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          reviewers="itsReema130"
+          assignees="itsReema130"
+
+          # Split the reviewers and assignees into arrays
+          IFS=' ' read -r -a reviewers_array <<< "$reviewers"
+          IFS=' ' read -r -a assignees_array <<< "$assignees"
+
+          # Add reviewers
+          for reviewer in "${reviewers_array[@]}"; do
+            gh pr edit ${{ github.event.pull_request.number }} --add-reviewer "$reviewer" || true
+          done
+
+          # Add assignees
+          for assignee in "${assignees_array[@]}"; do
+            gh pr edit ${{ github.event.pull_request.number }} --add-assignee "$assignee" || true
+          done
