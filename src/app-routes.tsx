@@ -11,7 +11,7 @@ const NotFoundPage = React.lazy(() => import("./pages/404"));
 const withSuspense = (WrappedComponent: JSX.Element) => {
   return (
     <Suspense
-      fallback={<div className="text-primary-200 pt-10">Loading...</div>}
+      fallback={<div className="text-primary-200 pt-10">Loadhhng...</div>}
     >
       {WrappedComponent}
     </Suspense>
