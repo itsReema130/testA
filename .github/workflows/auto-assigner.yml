@@ -1,19 +1,19 @@
-name: Add Reviewer to PR
+# name: Add Reviewer to PR
 
-on:
-  pull_request:
-    types: [opened, reopened]
+# on:
+#   pull_request:
+#     types: [opened, reopened]
 
-jobs:
-  add-reviewer:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Add Reviewer
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          curl -X POST \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers" \
-            -d '{"reviewers":["F600sa"]}'
+# jobs:
+#   add-reviewer:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Add Reviewer
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         run: |
+#           curl -X POST \
+#             -H "Authorization: Bearer $GITHUB_TOKEN" \
+#             -H "Accept: application/vnd.github+json" \
+#             "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers" \
+#             -d '{"reviewers":["F600sa"]}'

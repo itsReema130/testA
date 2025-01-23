@@ -3,5 +3,9 @@ addAssignees: true
 reviewers:
   - "itsReema130"
   - "F600sa"
+
+assignees:
+  - "author"
+
 numberOfReviewers: 0
 numberOfAssignees: 0
