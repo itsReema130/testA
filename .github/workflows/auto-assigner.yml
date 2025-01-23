@@ -1,14 +1,14 @@
-name: Add Reviewers
+name: Request Reviewers
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
-  request-reviewers:
+  add-reviewers:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
 
       - name: Request Reviewers
@@ -18,19 +18,22 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           reviewers="F600sa,anotheruser"
-          reviewers_json=$(jq -n --arg reviewers "$reviewers" '($reviewers | split(","))')
+          reviewers_json=$(echo "$reviewers" | jq -R 'split(",")')
 
-          response=$(curl -s -o response.json -w "%{http_code}" -X POST \
+          echo "Reviewers JSON payload: $reviewers_json"
+
+          response=$(curl -s -w "%{http_code}" -o response.json -X POST \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
             -H "Content-Type: application/json" \
             "https://api.github.com/repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/requested_reviewers" \
             -d "{\"reviewers\": $reviewers_json}")
 
-          http_code=$(tail -n1 response.json)
-          if [[ "$http_code" -ne 201 ]]; then
-            echo "Failed to add reviewers. Response:"
+          http_code=$(tail -n1 <<< "$response")
+          if [[ "$http_code" -eq 201 ]]; then
+            echo "Reviewers successfully added!"
+          else
+            echo "Failed to add reviewers. HTTP Status: $http_code"
             cat response.json
             exit 1
-          else
-            echo "Reviewers successfully added!"
           fi
