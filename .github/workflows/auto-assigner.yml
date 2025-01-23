@@ -21,25 +21,21 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # Input variables
           reviewers="F600sa"
-          assignees="itsReema130"
+          GITHUB_TOKEN=${GITHUB_TOKEN:?Error: GITHUB_TOKEN is not set}
+          PR_NUMBER=${PR_NUMBER:?Error: PR_NUMBER is not set}
+          GITHUB_REPOSITORY=${GITHUB_REPOSITORY:?Error: GITHUB_REPOSITORY is not set}
 
-          # Split the reviewers and assignees into arrays
-          IFS=' ' read -r -a reviewers_array <<< "$reviewers"
-          IFS=' ' read -r -a assignees_array <<< "$assignees"
+          # Split the reviewers into an array (comma-separated)
+          IFS=',' read -r -a reviewers_array <<< "$reviewers"
 
           # Add reviewers using the GitHub API
           for reviewer in "${reviewers_array[@]}"; do
-            echo "Attempting to add reviewer: $reviewer"
-            gh api \
-              --method POST \
-              -H "Authorization: token $GITHUB_TOKEN" \
-              /repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers \
-              -f reviewers="$reviewer" || true
-          done
-
-          # Add assignees using the GitHub CLI
-          for assignee in "${assignees_array[@]}"; do
-            echo "Attempting to add assignee: $assignee"
-            gh pr edit "${{ github.event.pull_request.number }}" --add-assignee "$assignee" || true
+          echo "Attempting to add reviewer: $reviewer"
+          gh api \
+          --method POST \
+          -H "Authorization: token $GITHUB_TOKEN" \
+          /repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/requested_reviewers \
+          -f reviewers='["'"$reviewer"'"]' || true
           done
