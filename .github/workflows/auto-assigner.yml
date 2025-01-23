@@ -1,41 +1,30 @@
-name: auto-assign-reviewers-and-assignees
+name: Add Reviewers
 
 on:
   pull_request:
-    types: [opened, ready_for_review, reopened]
+    types: [opened, synchronize, reopened]
 
 jobs:
-  auto_assign:
-    name: Auto Assign
+  add-reviewers:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Install GitHub CLI
-        run: sudo apt-get install gh -y
-
-      - name: Auto Assign Reviewers and Assignees
+      - name: Add Reviewers
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
-          # Input variables
           reviewers="F600sa"
-          GITHUB_TOKEN=${GITHUB_TOKEN:?Error: GITHUB_TOKEN is not set}
-          PR_NUMBER=${PR_NUMBER:?Error: PR_NUMBER is not set}
-          GITHUB_REPOSITORY=${GITHUB_REPOSITORY:?Error: GITHUB_REPOSITORY is not set}
-
-          # Split the reviewers into an array (comma-separated)
           IFS=',' read -r -a reviewers_array <<< "$reviewers"
 
-          # Add reviewers using the GitHub API
           for reviewer in "${reviewers_array[@]}"; do
-          echo "Attempting to add reviewer: $reviewer"
-          gh api \
-          --method POST \
-          -H "Authorization: token $GITHUB_TOKEN" \
-          /repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/requested_reviewers \
-          -f reviewers='["'"$reviewer"'"]' || true
+            echo "Attempting to add reviewer: $reviewer"
+            gh api \
+              --method POST \
+              -H "Authorization: token $GITHUB_TOKEN" \
+              /repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/requested_reviewers \
+              -f reviewers='["'"$reviewer"'"]' || true
           done
